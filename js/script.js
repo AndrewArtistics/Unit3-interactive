@@ -18,7 +18,11 @@ $('#design').children('option:eq(0)').hide();
 $('#color').prepend('<option disabled selected value="">Please select a T-shirt theme.</option>');
 $('#color').children().hide();
 
-$('#credit-card').hide(); //hides credit card inputs on load
+//appends an html string to the end of the activities fieldset
+$('.activities').append('<span id="spanTotal"><b><u>Total:</u></b> $0 </span>');
+
+ //removes 'select payment method' option.
+$('#payment').children('option:eq(0)').remove();
 //finds and appends ID's to the paypal and bitcoin divs and then hides them on load
 $("#credit-card").next().attr('id', 'paypal');
 $("#credit-card").next().next().attr('id', 'bitcoin');
@@ -68,6 +72,62 @@ $('#design').change(function(){
 Activities registration
 *************************/
 
+/******
+validates when a checkbox is checked.
+Adds price to a total cost, removes price when unchecked.
+disables activities checkboxes with conflicting time slots.
+****8*/
+$('.activities').change('click', function() {
+    var checked = 0;
+    if ($('input[name="all"]').is(':checked')) {
+        checked += 200;
+    };
+    if ($('input[name="js-frameworks"]').is(':checked')){
+        checked += 100;
+        $("input[name='express']").attr("disabled", true)
+    } else {
+        $("input[name='express']").attr("disabled", false)
+    };
+
+    if ($('input[name="js-libs"]').is(':checked')){
+        checked += 100;
+        $("input[name='node']").attr("disabled", true)
+    } else {
+        $("input[name='node']").attr("disabled", false)
+    };
+
+    if ($('input[name="express"]').is(':checked')){
+        checked += 100;
+        $("input[name='js-frameworks']").attr("disabled", true)
+    } else {
+        $("input[name='js-frameworks']").attr("disabled", false)
+    };
+
+    if ($('input[name="node"]').is(':checked')){
+        checked += 100;
+        $("input[name='js-libs']").attr("disabled", true)
+    } else {
+        $("input[name='js-libs']").attr("disabled", false)
+    };
+    
+    if ($('input[name="build-tools"]').is(':checked')){
+        checked += 100;
+    };
+    
+    if ($('input[name="npm"]').is(':checked')){
+        checked += 100;
+    };
+    totalCost(checked);
+});
+
+function totalCost(checked) {
+    if (checked !== 0 ) {
+        $('#spanTotal').replaceWith('<span id="spanTotal"><b><u>Total:</u></b> $' + checked + '</span>');
+    } else {
+        $('#spanTotal').replaceWith('<span id="spanTotal"><b><u>Total:</u></b> $0 </span>')
+    }
+};
+
 
 
 /***************
@@ -76,11 +136,6 @@ Payment methods
 $('#payment').change(function(){
     let payMethod = $('#payment').val();
 
-    if (payMethod == 'select_method') {
-        $('#credit-card').hide();
-        $('#paypal').hide();
-        $('#bitcoin').hide();
-    };
     if (payMethod == 'credit card') {
         $('#credit-card').fadeIn(500);
         $('#paypal').hide();
