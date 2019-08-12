@@ -134,9 +134,9 @@ function totalCost(checked) {
 Payment methods
 ***************/
 $('#payment').change(function(){
-    let payMethod = $('#payment').val();
-
+    const payMethod = $('#payment').val();
     if (payMethod == 'credit card') {
+        //fadeIn only applies only when selection is changed from and then changed back to 'credit card'
         $('#credit-card').fadeIn(500);
         $('#paypal').hide();
         $('#bitcoin').hide();
@@ -154,8 +154,66 @@ $('#payment').change(function(){
 });
 
 /*************************
-Regex form validations
-Displays proper error messages for blank/incomplete forms
-regex to check for valid input/formats for name, email and credit information
+Regex functions for each input field
 *************************/
 
+var regName = /^([a-z]{3,16})$/i;
+var regEmail = /^[\w\.]+@+[\w]+\.([\w]{3,4})?$/i;
+var regCard = /^([\d]{13,16})$/;
+var regZip = /^([\d]{5})$/;
+var regCVV = /^([\d]{3})$/;
+
+function validation(input, regex){
+    if (regex.test(input.val()) === true){
+        input.css('border', '');
+        return true;
+    } else {
+        input.css('border', '3px solid red');
+        input.after('<span class="invalid">Invalid input. Please check field above.</span>')
+        return false;
+    };
+};
+
+//Checks to see if any activities are checked
+$('.activities').after('<p id="js-active">Please check at least one activity.</p>');
+$('#js-active').css('color', 'red');
+$('#js-active').hide();
+
+function checkedActive(){
+    const activeCount = $('.activities input:checkbox:checked').length;
+    const activeLegend = $('.activities legend');
+    if (activeCount >= 1) {
+        activeLegend.css('color', '');
+        $('#js-active').hide();
+        return true;
+    } else {
+        activeLegend.css('color', '#8b0000');
+        $('#js-active').show();
+        return false;
+    };
+};
+
+//shows alert and error messages for invalid fields
+$('button').on('click', function(e){
+    $('.invalid').remove();
+    const payMethod = $('#payment').val();
+    let validName = validation($('#name'), regName);
+    let validMail = validation($('#mail'), regEmail);
+    if (validName === false || validMail === false){
+        e.preventDefault();
+    }
+    if (!checkedActive()) {
+        e.preventDefault();
+    }
+    if (payMethod == 'credit card') {
+        let validCard = validation($('#cc-num'), regCard);
+        let validCVV = validation($('#cvv'), regCVV);
+        let validZip = validation($('#zip'), regZip);
+        if (validCard === false || validCVV === false || validZip === false){
+            e.preventDefault();
+        } else {
+            $('.invalid').remove();
+            return true;
+        }
+    }
+});
