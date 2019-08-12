@@ -163,6 +163,7 @@ var regCard = /^([\d]{13,16})$/;
 var regZip = /^([\d]{5})$/;
 var regCVV = /^([\d]{3})$/;
 
+//function to validate appropriate fields, gives error message if input is input is invalid
 function validation(input, regex){
     if (regex.test(input.val()) === true){
         input.css('border', '');
@@ -193,7 +194,7 @@ function checkedActive(){
     };
 };
 
-//shows alert and error messages for invalid fields
+//shows built in validation error messages for invalid fields, prevent page reload if fields are invalid
 $('button').on('click', function(e){
     $('.invalid').remove();
     const payMethod = $('#payment').val();
