@@ -157,7 +157,7 @@ $('#payment').change(function(){
 Regex functions for each input field
 *************************/
 
-var regName = /^([a-z]{3,16})$/i;
+var regName = /^([a-z\s]{3,16})$/i;
 var regEmail = /^[\w\.]+@+[\w]+\.([\w]{3,4})?$/i;
 var regCard = /^([\d]{13,16})$/;
 var regZip = /^([\d]{5})$/;
